@@ -1,121 +1,2363 @@
-openapi: "3.0.0"
+openapi: 3.0.0
+x-stoplight:
+  id: 20i9pa8ib5sdc
 info:
-  version: 1.0.0
-  title: Swagger Petstore
-  license:
-    name: MIT
-  description: |
-    ## Petstore API
-
-    | Syntax | Description |
-    | ----------- | ----------- |
-    | Header | Title |
-    | Paragraph | Text | 
-
+  title: DREAM-PUBLIC-API
+  version: '1.0'
 servers:
-  - url: http://petstore.swagger.io/v1
+  - description: Production server
+    url: https://public-api.dream.gov.ua
+  - description: Development server
+    url: https://public-api-dev.dream.gov.ua/marketplace/public/dream
 paths:
-  /pets:
+  /marketplace/public/dream/ideas:
     get:
-      summary: List all pets
-      operationId: listPets
-      tags:
-        - pets
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
+      summary: Отримання переліку проєктів DREAM
+      tags: []
       responses:
         '200':
-          description: A paged array of pets
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
+          description: OK
+          headers: {}
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pets"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    post:
-      summary: Create a pet
-      operationId: createPets
-      tags:
-        - pets
-      responses:
-        '201':
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /pets/{petId}:
-    get:
-      summary: Info for a specific pet
-      operationId: showPetById
-      tags:
-        - pets
+                type: object
+                properties:
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: dodhhgqofws9y
+                    items:
+                      x-stoplight:
+                        id: sd5s8385ckgyl
+                      type: object
+                      properties:
+                        internal:
+                          type: object
+                          x-stoplight:
+                            id: lg1aqbjwt32wz
+                          required:
+                            - id
+                            - code
+                          description: Дані ідентифікації елементу переліку
+                          properties:
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: cg7r2nembcxih
+                              format: uuid
+                              description: Унікальний ідентифікатор запису
+                            code:
+                              type: string
+                              x-stoplight:
+                                id: mmz7pvcylwoq8
+                              description: Ідентифікатор запису в секторальній системі
+                        external:
+                          type: object
+                          x-stoplight:
+                            id: ap3s5n05ivk0k
+                          required:
+                            - updated
+                          description: Інформація щодо останнього оновлення запису
+                          properties:
+                            updated:
+                              type: string
+                              x-stoplight:
+                                id: jzthe08re0n8y
+                              format: date-time
+                              description: Дата оновлення запису
+                required:
+                  - data
+      operationId: get-ideas
+      x-stoplight:
+        id: l7wlj8jwlhr3r
       parameters:
-        - name: petId
-          in: path
-          required: true
-          description: The id of the pet to retrieve
-          schema:
+        - schema:
             type: string
+            format: date-time
+            example: '2023-09-08T09:37:53.882914Z'
+          in: query
+          name: from
+          description: зміщення дати й часу (offset) для отримання оновлень.
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          in: query
+          name: order
+          description: критерій упорядкування списку
+      description: >-
+        Отримання списку проєктів DREAM за датою модифікації. Ендпоінт дозволяє
+        отримати повний список усіх проектів DREAM, а також організувати
+        синхронізацію оновлень, використовуючи параметри запиту
+    parameters: []
+  /marketplace/public/dream/ideas/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: ідентифікатор проєкта DREAM
+    get:
+      summary: Отримання проєкту DREAM за {id}
+      tags: []
       responses:
         '200':
-          description: Expected response to a valid request
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pet"
-        default:
-          description: unexpected error
+                type: object
+                properties:
+                  date:
+                    type: string
+                    x-stoplight:
+                      id: vsvj7r9gus5p7
+                    format: date-time
+                    description: дата створення проєкта
+                  updated:
+                    type: string
+                    x-stoplight:
+                      id: pwkhs0gulhq3g
+                    format: date-time
+                    description: дата останнього оновлення проєкта
+                  type:
+                    x-stoplight:
+                      id: 8ks2hoipj9uu6
+                    enum:
+                      - rehabilitation
+                      - construction
+                      - equipment
+                    description: код характеру проєкта згідно з довідником
+                  title:
+                    type: array
+                    x-stoplight:
+                      id: xcovcoqg3aim9
+                    minItems: 1
+                    uniqueItems: true
+                    description: 'Загальна назва проєкта - мультимовний масив '
+                    items:
+                      x-stoplight:
+                        id: hzh58varo1pea
+                      type: object
+                      minProperties: 1
+                      properties:
+                        lang:
+                          x-stoplight:
+                            id: pnaqb6mrhptab
+                          enum:
+                            - uk
+                            - en
+                          description: 'код мови перекладу що надається обʼєктом '
+                        translation:
+                          type: string
+                          x-stoplight:
+                            id: qepxk8cugq0mg
+                          description: переклад мовою обʼєкта
+                  description:
+                    type: array
+                    x-stoplight:
+                      id: guz51kwzyk74y
+                    minItems: 1
+                    description: 'Загальний опи проєкта - мультимовний масив '
+                    items:
+                      x-stoplight:
+                        id: 9iis2e77eg51k
+                      type: object
+                      properties:
+                        lang:
+                          x-stoplight:
+                            id: 5nnqn356kfrth
+                          enum:
+                            - uk
+                            - en
+                          description: 'код мови перекладу що надається обʼєктом '
+                        translation:
+                          type: string
+                          x-stoplight:
+                            id: 2odkpzlxre1wa
+                          description: переклад мовою обʼєкта
+                  purpose:
+                    x-stoplight:
+                      id: vjanfi91e30b7
+                    enum:
+                      - restoration
+                      - development
+                    description: код типу проєкта згідно з довідником
+                  status:
+                    x-stoplight:
+                      id: ddf1oqu3szyxy
+                    enum:
+                      - pending
+                      - active
+                      - complete
+                      - cancelled
+                      - unsuccessful
+                    description: код статусу проекта згідно з довідником
+                    readOnly: true
+                  statusDetails:
+                    x-stoplight:
+                      id: zvd1w5gj8bd96
+                    enum:
+                      - initiated
+                      - definition
+                      - defined
+                      - appraisal
+                      - appraised
+                      - structuring
+                      - structured
+                      - applied
+                      - refused
+                      - approved
+                      - implementation
+                    description: код деталей статусу проєкта згідно з довідником
+                  metrics:
+                    type: array
+                    x-stoplight:
+                      id: jc16hhfilg18i
+                    description: Показники проєкту
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: 190l5uoirzb4w
+                      type: object
+                      properties:
+                        id:
+                          x-stoplight:
+                            id: max4b9v0ae7oc
+                          enum:
+                            - initiationScore
+                            - initiationMetricsSocialAndEconomic
+                            - initiationMetricsFinancial
+                            - initiationMetricsFunctional
+                          description: 'код показника проєкта згідно з довідником  '
+                        observations:
+                          type: array
+                          x-stoplight:
+                            id: 2kxvr5z9ca4bx
+                          description: перелік елементів показника проєкта
+                          minItems: 1
+                          items:
+                            x-stoplight:
+                              id: p9sxa9r4y7rxs
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                x-stoplight:
+                                  id: w5cofsuf2he82
+                                description: ідентифікатор елемента показника проєкта
+                                format: uuid
+                              notes:
+                                type: string
+                                x-stoplight:
+                                  id: kwadxx34q1yc3
+                                description: Назва елемента показника проєкта
+                              dimensions:
+                                type: object
+                                x-stoplight:
+                                  id: mv424m8kbrp15
+                                description: виміри елемента показника проєкта
+                                required:
+                                  - basicValue
+                                  - targetValue
+                                  - characteristic
+                                properties:
+                                  basicValue:
+                                    type: number
+                                    x-stoplight:
+                                      id: aubodnva8ayri
+                                    description: базова значення елемента показника проєкта
+                                  targetValue:
+                                    type: number
+                                    x-stoplight:
+                                      id: xqa51ao5x2qx8
+                                    description: >-
+                                      очікуване значення елемента показника
+                                      проєкта
+                                  characteristic:
+                                    x-stoplight:
+                                      id: hx5q5oeg2on91
+                                    enum:
+                                      - numberOfConsumers
+                                      - numberOfIDP
+                                      - other
+                                    description: >-
+                                      код характеристики, що описується цим
+                                      елементом згідно з довідником 
+                            required:
+                              - id
+                              - dimensions
+                      required:
+                        - id
+                        - observations
+                  parties:
+                    type: array
+                    x-stoplight:
+                      id: e868ydu8whn29
+                    description: сторони проекта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: wqeuepdv8qf6z
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: p4s0sv11o8tqv
+                          description: складений ідентифікатор сторони проєкта
+                        roles:
+                          type: array
+                          x-stoplight:
+                            id: 69ei7d396ev55
+                          description: коди ролей сторони проєкта згідно з довідником
+                          minItems: 1
+                          items:
+                            x-stoplight:
+                              id: 03e09xqqifi4m
+                            enum:
+                              - balancer
+                              - author
+                              - initiator
+                              - implementer
+                              - procuringEntity
+                              - tenderer
+                              - supplier
+                              - contractingAuthority
+                              - supervisor
+                              - expert
+                              - designer
+                        identifier:
+                          type: object
+                          x-stoplight:
+                            id: 5al22acgj4hl4
+                          description: Національний ідентифікатор сторони проєкта
+                          required:
+                            - scheme
+                            - id
+                            - legalName
+                          properties:
+                            scheme:
+                              x-stoplight:
+                                id: h1nsrmht6t1t1
+                              enum:
+                                - UA-EDR
+                              description: код схеми ідентифкації згідно довідника
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: pyckh1d65fege
+                              description: >-
+                                Ідентифікатор згідно використованої схеми
+                                ідентифікації
+                            legalName:
+                              type: string
+                              x-stoplight:
+                                id: 2d7iyqbh0x5z3
+                              description: 'офіційна назва згідно із схемою ідентифікації '
+                      required:
+                        - id
+                        - roles
+                        - identifier
+                  targets:
+                    type: array
+                    x-stoplight:
+                      id: uc4ktau7wm5jc
+                    description: План реалізації проєкта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: xl1jtjb7te3b8
+                      type: object
+                      properties:
+                        id:
+                          x-stoplight:
+                            id: 002zmudi93xvf
+                          enum:
+                            - initiationPhases
+                            - initiationTargetsSocialAndEconomic
+                            - initiationTargetsFinancial
+                            - initiationScopeDetails
+                            - initiationScopePhases
+                          description: код елемента планування проєкта згідно довідника
+                        observations:
+                          type: array
+                          x-stoplight:
+                            id: y2ly27bezahht
+                          description: перелік етапів плану реалізації проєкта
+                          minItems: 1
+                          items:
+                            x-stoplight:
+                              id: 26g0fy51c8aze
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                x-stoplight:
+                                  id: puqh7k5l132rh
+                                description: ідентифікатор етапу плану реалізації проєкта
+                                format: uuid
+                              period:
+                                type: object
+                                x-stoplight:
+                                  id: c3cdpif0mzvnb
+                                description: період етапу плану реалізації проєкта
+                                required:
+                                  - durationInDays
+                                properties:
+                                  durationInDays:
+                                    type: number
+                                    x-stoplight:
+                                      id: hd55sjpmsrhov
+                                    description: >-
+                                      значення тривалості періододу етапу плану
+                                      реалізації проєкта в днях 
+                              dimensions:
+                                type: object
+                                x-stoplight:
+                                  id: xvjhjd89jns1b
+                                description: виміри етапу плану реалізації проєкта
+                                required:
+                                  - phaseCode
+                                properties:
+                                  phaseCode:
+                                    x-stoplight:
+                                      id: 4l3v7yrf545nd
+                                    enum:
+                                      - identification
+                                      - scoping
+                                      - hearings
+                                      - budgeting
+                                      - procurementDecision
+                                      - procurement
+                                      - closure
+                                      - implementation
+                                      - commissioning
+                                      - launch
+                                      - operations
+                                      - disposalDecision
+                                      - disposal
+                                    description: >-
+                                      код фази реалізції проєкта згідно з
+                                      довідником 
+                            required:
+                              - id
+                              - period
+                              - dimensions
+                      required:
+                        - id
+                        - observations
+                  documents:
+                    type: array
+                    x-stoplight:
+                      id: e5mt5jt5u11xz
+                    description: Документи проєкта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: s4qk68ipyc85p
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: dnlny5lqqjw5a
+                          description: ідентифікатор документа проєкта
+                          format: uuid
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: u3k3riopnx4tm
+                          description: uri документа проєкта
+                          format: uri
+                        format:
+                          type: string
+                          x-stoplight:
+                            id: bljcmypy67w77
+                          example: Mime Types
+                          description: формат документа проєкта, Mime Types
+                        title:
+                          type: string
+                          x-stoplight:
+                            id: wlwh97a3nbm77
+                          description: Назва документа проєкта
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: v7xrl6ks40904
+                          description: опис документа проєкта
+                        datePublished:
+                          type: string
+                          x-stoplight:
+                            id: 1wg1pxmx2x4v2
+                          format: date-time
+                          description: дата публікації документа
+                        dateModified:
+                          type: string
+                          x-stoplight:
+                            id: w7wh3wsuycw4z
+                          format: date-time
+                          description: дата модифікації документа проєкта
+                        documentType:
+                          x-stoplight:
+                            id: jyvl8wu1x43gi
+                          enum:
+                            - illustrationBefore
+                            - illustrationDamaged
+                            - illustrationInProgress
+                            - illustrationVision
+                            - illustrationComplete
+                            - illustrationCover
+                            - illustration
+                            - document
+                            - designDocument
+                            - technicalDocument
+                            - legalDocument
+                            - permissionDocument
+                            - feasibilityStudy
+                            - certification
+                          description: 'код типу документа згідно з довідником '
+                        accessDetails:
+                          x-stoplight:
+                            id: fjspoq2scolkj
+                          enum:
+                            - open
+                            - limited
+                            - restricted
+                          description: 'код рівня доступу до документа згідно з довідником '
+                      required:
+                        - id
+                        - url
+                        - format
+                        - datePublished
+                        - dateModified
+                        - documentType
+                  approaches:
+                    type: array
+                    x-stoplight:
+                      id: c9fxcfenput18
+                    description: Альтернативні рішення в рамках проєкта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: 30ttk25ecgt8s
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: 1w2j40as7bnl1
+                          description: 'ідентифікатор рішення '
+                          format: uuid
+                        title:
+                          type: string
+                          x-stoplight:
+                            id: 7k2dfo04cb8f5
+                          description: Назва рішення
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: zwsb1ifar90qa
+                          description: Короткий опис рішення
+                        items:
+                          type: array
+                          x-stoplight:
+                            id: 694v55xnp2314
+                          minItems: 1
+                          description: 'обʼєкти інвестицій в складі рішення '
+                          items:
+                            x-stoplight:
+                              id: crob503foajkl
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                x-stoplight:
+                                  id: vpfho2vi1fhri
+                                format: uuid
+                                description: ідентифікатор обʼєкта інвестицій
+                              description:
+                                type: string
+                                x-stoplight:
+                                  id: uif75xbbjzwju
+                                description: назва обʼєкта інвестицій
+                              locations:
+                                type: array
+                                x-stoplight:
+                                  id: o4jvz25w3jhts
+                                minItems: 1
+                                description: гео дані обʼєкта інвестицій
+                                items:
+                                  x-stoplight:
+                                    id: 0lsvmgfv6lim1
+                                  type: object
+                                  properties:
+                                    gazetteer:
+                                      type: object
+                                      x-stoplight:
+                                        id: ahg0axklzoanh
+                                      description: 'масив гео-просторових даних '
+                                      properties:
+                                        scheme:
+                                          x-stoplight:
+                                            id: jz92qvdapskb9
+                                          description: >-
+                                            схема ідентифікації гео-просторових
+                                            даних згідно з довідником 
+                                          enum:
+                                            - UA-CATOTTG
+                                            - UA-COATU
+                                        identifiers:
+                                          type: array
+                                          x-stoplight:
+                                            id: lrmrpzuyks1tb
+                                          description: 'перелік кодів гео даних згідно схеми '
+                                          minItems: 1
+                                          items:
+                                            x-stoplight:
+                                              id: d5gpkdjj24nrj
+                                            type: string
+                                      required:
+                                        - scheme
+                                        - identifiers
+                                    description:
+                                      type: string
+                                      x-stoplight:
+                                        id: 6r4cyvvt68a4l
+                                      description: 'опис до елемента гео даних '
+                              additionalClassifications:
+                                type: array
+                                x-stoplight:
+                                  id: tv3gwpftnovmc
+                                description: додаткові класифікатори до обʼєкта інвестицій
+                                items:
+                                  x-stoplight:
+                                    id: nq86n05haj3vm
+                                  type: object
+                                  properties:
+                                    scheme:
+                                      x-stoplight:
+                                        id: 56f04d6pz3onk
+                                      enum:
+                                        - UN-CPC
+                                        - UA-DZK
+                                        - UA-RDDP
+                                        - UA-SESC
+                                        - UA-ECBE
+                                      description: >-
+                                        код схеми класифікації згідно з
+                                        довідником
+                                    id:
+                                      type: string
+                                      x-stoplight:
+                                        id: 6uva388uf651d
+                                      description: >-
+                                        ідентифікатор класу згідно схеми
+                                        класифікації 
+                                  required:
+                                    - scheme
+                                    - id
+                            required:
+                              - id
+                        budget:
+                          type: object
+                          x-stoplight:
+                            id: vigo365g31nmp
+                          description: 'бюджет технічного рішення '
+                          properties:
+                            budgetBreakdown:
+                              type: array
+                              x-stoplight:
+                                id: jow8m1g151vvk
+                              description: 'статті витрат бюджету технічного рішення '
+                              items:
+                                x-stoplight:
+                                  id: ws2e4ps1wjjji
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    x-stoplight:
+                                      id: war87uqthe8fe
+                                    format: uud
+                                    description: 'ідентифікатор статті витрат '
+                                  amount:
+                                    type: object
+                                    x-stoplight:
+                                      id: q0zir5nua4n4v
+                                    description: 'сума статі витрат '
+                                    required:
+                                      - amount
+                                      - currency
+                                    properties:
+                                      amount:
+                                        type: number
+                                        x-stoplight:
+                                          id: 0vr6rdocvkvxb
+                                        description: сума по статті
+                                      currency:
+                                        x-stoplight:
+                                          id: oeiwzlhuudx3d
+                                        enum:
+                                          - USD
+                                          - EUR
+                                          - UAH
+                                        description: код валюти згідно з довідником
+                                      valueAddedTaxIncluded:
+                                        type: boolean
+                                        x-stoplight:
+                                          id: 40n3akzi6hwql
+                                        description: признак включення ПДВ в суму витрат
+                                  period:
+                                    type: object
+                                    x-stoplight:
+                                      id: ocmrgqyn3oqvp
+                                    description: період витрат за статтею
+                                    required:
+                                      - startDate
+                                      - endDate
+                                    properties:
+                                      startDate:
+                                        type: string
+                                        x-stoplight:
+                                          id: 5604f4o71a0wi
+                                        format: date-time
+                                        description: дата початку періоду
+                                      endDate:
+                                        type: string
+                                        x-stoplight:
+                                          id: 1slfar5ubos3y
+                                        format: date-time
+                                        description: дата завершення періоду
+                                  classifications:
+                                    type: object
+                                    x-stoplight:
+                                      id: l9flz5g7opxro
+                                    description: 'класифікація статті витрат '
+                                    required:
+                                      - costItem
+                                      - costType
+                                    properties:
+                                      costItem:
+                                        x-stoplight:
+                                          id: gq6lvdcj88qli
+                                        description: 'код предмету витрат згідно з довідником '
+                                        enum:
+                                          - design
+                                          - equipment
+                                          - construction
+                                          - resettlement
+                                          - sitePreparation
+                                          - measures
+                                          - contingencies
+                                          - overheads
+                                          - taxes
+                                          - financing
+                                          - operating
+                                          - maintenance
+                                          - replacement
+                                          - endOfLife
+                                          - projectManagement
+                                          - upfrontFee
+                                          - landAcquisition
+                                      costType:
+                                        x-stoplight:
+                                          id: luwak66ksy1ce
+                                        description: >-
+                                          код типу предмету витрат згідно з
+                                          довідником
+                                        enum:
+                                          - opex
+                                          - capex
+                                      budgetType:
+                                        x-stoplight:
+                                          id: 38qjg37xfrzi7
+                                        description: >-
+                                          код типу бюджетування згідно з
+                                          довідником
+                                        enum:
+                                          - original
+                                          - revised
+                                          - agreed
+                                required:
+                                  - id
+                                  - amount
+                                  - period
+                                  - classifications
+                            finance:
+                              type: array
+                              x-stoplight:
+                                id: 3q1w6chsp6y2j
+                              description: 'Джерела фінансування технічного рішення '
+                              items:
+                                x-stoplight:
+                                  id: dh2qm97guy0u0
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    x-stoplight:
+                                      id: nr7s2qhbt0665
+                                    format: uuid
+                                    description: >-
+                                      ідентифікатор запису про джерело
+                                      фінансування 
+                                  value:
+                                    type: object
+                                    x-stoplight:
+                                      id: zdj65wd293req
+                                    description: 'сума фінансування '
+                                    required:
+                                      - amount
+                                      - currency
+                                    properties:
+                                      amount:
+                                        type: number
+                                        x-stoplight:
+                                          id: odytkgwvjlvu3
+                                        description: 'фінансове вираження суми фінансування '
+                                      currency:
+                                        x-stoplight:
+                                          id: xzj9fzirczagp
+                                        enum:
+                                          - EUR
+                                          - USD
+                                          - UAH
+                                        description: >-
+                                          код валюти фінансування згідно з
+                                          довідником
+                                  period:
+                                    type: object
+                                    x-stoplight:
+                                      id: lfwmu7by53vcn
+                                    description: період фінансування
+                                    required:
+                                      - startDate
+                                      - endDate
+                                    properties:
+                                      startDate:
+                                        type: string
+                                        x-stoplight:
+                                          id: 9spezucb8aztx
+                                        format: date-time
+                                        description: дата початку періоду
+                                      endDate:
+                                        type: string
+                                        x-stoplight:
+                                          id: ffz24t6gxrc93
+                                        format: date-time
+                                        description: дата завершення періоду
+                                  financeType:
+                                    x-stoplight:
+                                      id: w9xos6u2q5e9s
+                                    description: код типу фінансування з довідником
+                                    enum:
+                                      - internationalPartners
+                                      - stateFunds
+                                      - privateInvestments
+                                  financeCategory:
+                                    x-stoplight:
+                                      id: aj4gvm8pvuws2
+                                    enum:
+                                      - internationalOrganization
+                                      - localBudget
+                                      - stateCentralBudget
+                                      - united24
+                                      - liquidationFund
+                                      - stateReserve
+                                      - stateSubsidies
+                                      - stateSpecialBudget
+                                      - naturalPerson
+                                      - legalEntity
+                                      - abroadState
+                                      - abroadEntity
+                                      - abroadPerson
+                                    description: >-
+                                      код категорії фінансування згідно з
+                                      довідником
+                                  financingParty:
+                                    type: object
+                                    x-stoplight:
+                                      id: paymfmj54iw36
+                                    description: фінансуюча сторона
+                                    properties:
+                                      id:
+                                        type: string
+                                        x-stoplight:
+                                          id: k9fed7piafrfv
+                                        description: 'код сторони фінансування '
+                                      name:
+                                        type: string
+                                        x-stoplight:
+                                          id: 6p3xokwzhgqpx
+                                        description: 'назва сторони фінансування '
+                                required:
+                                  - id
+                                  - value
+                                  - period
+                                  - financeType
+                                  - financeCategory
+                        metrics:
+                          type: array
+                          x-stoplight:
+                            id: 4o36jdtv39hiz
+                          description: Характеристики обєʼктів інвестицій в рамках рішення
+                          items:
+                            x-stoplight:
+                              id: 51lcltfm97og7
+                            type: object
+                            properties:
+                              id:
+                                x-stoplight:
+                                  id: hr37vw8obs8ji
+                                description: Код характеристики згідно з довідником
+                                enum:
+                                  - InitiationItemMetrics
+                                  - initiationItemMetricsSocialAndEconomic
+                              observations:
+                                type: array
+                                x-stoplight:
+                                  id: f1j64jhoneem5
+                                description: 'елементи характеристики '
+                                items:
+                                  x-stoplight:
+                                    id: 9job4we2c26tm
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                      x-stoplight:
+                                        id: h5omqctppl9lx
+                                      format: uuid
+                                      description: ідентифікатор елемента характеристики
+                                    notes:
+                                      type: string
+                                      x-stoplight:
+                                        id: h1p0qter19vqr
+                                      description: 'назва елемента характеристики '
+                                    measure:
+                                      type: number
+                                      x-stoplight:
+                                        id: baduof9fvhxgq
+                                      description: 'показник елементу характиристики '
+                                    dimensions:
+                                      type: object
+                                      x-stoplight:
+                                        id: wcnn0lcekza9r
+                                      description: 'виміри елементів характеристики '
+                                      properties:
+                                        relatedItem:
+                                          type: string
+                                          x-stoplight:
+                                            id: n62qbth9tdprk
+                                          description: >-
+                                            ідентифікатор обʼєкта інвестицій до
+                                            якого відноситься елемент
+                                            характеристики 
+                        targets:
+                          type: array
+                          x-stoplight:
+                            id: ooeqwwrjbcdnr
+                          description: план реалізації обʼєктів інвестицій в рамках рішення
+                          items:
+                            x-stoplight:
+                              id: 4fihkfyqtleyx
+                            type: object
+                            properties:
+                              id:
+                                x-stoplight:
+                                  id: 08qb42hbo6nhw
+                                enum:
+                                  - initiationItemTargetsSocialAndEconomic
+                                  - initiationItemTargetsFinancial
+                                  - initiationItemPhases
+                                description: код елемента плана
+                              observations:
+                                type: array
+                                x-stoplight:
+                                  id: hsk4jdntzqdlg
+                                description: 'етапи елементу плана '
+                                items:
+                                  x-stoplight:
+                                    id: o0jejhat22fme
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                      x-stoplight:
+                                        id: hj4tcvqegxbf7
+                                      description: ідентифікатор елементу плана
+                                      format: uuid
+                                    dimensions:
+                                      type: object
+                                      x-stoplight:
+                                        id: thqfz9u7qc45g
+                                      description: 'виміри елемента плана '
+                                      required:
+                                        - phaseCode
+                                      properties:
+                                        phaseCode:
+                                          x-stoplight:
+                                            id: 2vyppilzxq8so
+                                          enum:
+                                            - design
+                                            - expertise
+                                            - procurement
+                                            - feasibilityStudy
+                                            - completion
+                                            - permissioning
+                                            - approval
+                                            - handOver
+                                            - concept
+                                            - closure
+                                            - operating
+                                            - design_clarification
+                                            - execution
+                                            - examination
+                                            - commissioning
+                                          description: >-
+                                            код фази реалізції обʼєкта згідно з
+                                            довідником 
+                                        relatedItem:
+                                          type: string
+                                          x-stoplight:
+                                            id: 4kh7ulq57a736
+                                          description: >-
+                                            ідентифікатор обʼєкта інвестицій до
+                                            якого відноситься елемент
+                                            характеристики 
+                                    period:
+                                      type: object
+                                      x-stoplight:
+                                        id: wws2knrf2nbh7
+                                      description: 'період елемента плана '
+                                      properties:
+                                        durationInDays:
+                                          type: number
+                                          x-stoplight:
+                                            id: 1c8bd3j6ftlae
+                                          description: 'тривалість періоду в днях '
+                                      required:
+                                        - durationInDays
+                                  required:
+                                    - id
+                                    - dimensions
+                            required:
+                              - id
+                              - observations
+                        documents:
+                          type: array
+                          x-stoplight:
+                            id: 7ekizy3zcqxar
+                          description: Документи обʼєктів інвестицій
+                          items:
+                            x-stoplight:
+                              id: ubmg4phzjd0an
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                x-stoplight:
+                                  id: jndx923soiyie
+                                description: ідентифікатор документа
+                                format: uuid
+                              url:
+                                type: string
+                                x-stoplight:
+                                  id: 83d2zboz60le0
+                                format: uri
+                                description: uri документа
+                              title:
+                                type: string
+                                x-stoplight:
+                                  id: q74tgg1er4804
+                                description: Назва документа
+                              description:
+                                type: string
+                                x-stoplight:
+                                  id: 5ymd8jms5vb9r
+                                description: опис документа
+                              format:
+                                type: string
+                                x-stoplight:
+                                  id: o080xivn8dlsu
+                                description: формат документа, MIME Types
+                              dateModified:
+                                type: string
+                                x-stoplight:
+                                  id: l2vh6pvzq0r17
+                                format: date-time
+                                description: дата модифікації документа
+                              datePublished:
+                                type: string
+                                x-stoplight:
+                                  id: f24e63aflw8r1
+                                format: date-time
+                                description: дата публікації документа
+                              documentType:
+                                x-stoplight:
+                                  id: 3w61ul5tgmlp9
+                                enum:
+                                  - illustrationBefore
+                                  - illustrationDamaged
+                                  - illustrationInProgress
+                                  - illustrationVision
+                                  - illustrationComplete
+                                  - illustrationCover
+                                  - illustration
+                                  - document
+                                  - designDocument
+                                  - technicalDocument
+                                  - legalDocument
+                                  - permissionDocument
+                                  - feasibilityStudy
+                                  - certification
+                                description: 'код типу документа згідно з довідником '
+                              accessDetails:
+                                x-stoplight:
+                                  id: cq386nhqrt8vg
+                                description: >-
+                                  код рівня доступу до документа згідно з
+                                  довідником 
+                                enum:
+                                  - open
+                                  - limited
+                                  - restricted
+                              relatesTo:
+                                x-stoplight:
+                                  id: zb7psp6f4wss7
+                                description: >-
+                                  код елемента складу проекта, до якого
+                                  відноситься документ 
+                                enum:
+                                  - item
+                              relatedItem:
+                                type: string
+                                x-stoplight:
+                                  id: oav5t77ceyhpw
+                                description: >-
+                                  ідентифікатор обʼєкта інвестицій до якого
+                                  відноситься елемент характеристики 
+                      required:
+                        - id
+                        - title
+                  additionalClassifications:
+                    type: array
+                    x-stoplight:
+                      id: bgoyfpxtf4npd
+                    description: додактові класифікатори проекта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: r2k6xo974z427
+                      type: object
+                      properties:
+                        scheme:
+                          x-stoplight:
+                            id: na8p9kzv7uzqh
+                          enum:
+                            - UN-MDG
+                            - UA-DREAM
+                            - WB-ECO
+                            - WB-RDNA
+                            - UN-CPC
+                            - COFOG
+                            - UA-GIS
+                          description: код схеми класифікації згідно з довідником
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: xv3sr5mbff64j
+                          description: >-
+                            ідентифікатор класифікації згідно схеми
+                            класифікації 
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: 6qrsfv361h9i1
+                          description: 'опис класифікації '
+                      required:
+                        - scheme
+                        - id
+                  relatedProcesses:
+                    type: array
+                    x-stoplight:
+                      id: 8uxauygajtb59
+                    minItems: 1
+                    description: процеси, повʼязані з проектом
+                    items:
+                      x-stoplight:
+                        id: hyue862gz1r3i
+                      type: object
+                      properties:
+                        scheme:
+                          x-stoplight:
+                            id: qybxmf9d0sqe3
+                          description: >-
+                            схема ідентифікації повʼязаного процесу згідно з
+                            довідником
+                          enum:
+                            - UA-DREAM
+                            - UA-RDDP
+                            - UA-PROZORRO
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: mplxqlbz6g3o7
+                          description: ідентифікатор запису про повʼязаний процес
+                        identifier:
+                          type: string
+                          x-stoplight:
+                            id: jcg5mtzaoogte
+                          description: 'ідентифікатор процесу згідно схеми ідентифікації '
+                        relationship:
+                          x-stoplight:
+                            id: ra3iagstua6ss
+                          description: 'код типу звʼязку згідно з довідником '
+                          enum:
+                            - parent
+                            - alternative
+                            - supplimented
+                            - dependency
+                            - procurement
+                            - object
+                            - idea
+                      required:
+                        - scheme
+                        - id
+                        - relationship
+                  contractingProcesses:
+                    type: array
+                    x-stoplight:
+                      id: 7p7hg0vngkd8g
+                    description: Перелік контрактних процессів в рамках даного проекта
+                    minItems: 1
+                    items:
+                      x-stoplight:
+                        id: vm5ycz6dgnp7q
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: lcsnwkgokyfya
+                          description: Системний ідентифікатор процеса
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: v8qa3e2apx2vv
+                          format: uri
+                          description: >-
+                            Якщо процес вібдувається поза системою Прозорро -
+                            посилання на платформу процесу
+                        platform:
+                          x-stoplight:
+                            id: auwymat8ynkgd
+                          description: >-
+                            Код платформи проведення процедури укладання
+                            договору
+                          enum:
+                            - national
+                            - international
+                        summary:
+                          type: object
+                          x-stoplight:
+                            id: 5u4s6kfpzyr29
+                          description: Загальна інформація про процес
+                          properties:
+                            date:
+                              type: string
+                              x-stoplight:
+                                id: 4ciflk18oipov
+                              format: date-time
+                              description: Дата ініціації процеса
+                            title:
+                              type: array
+                              x-stoplight:
+                                id: e6fied330wgo9
+                              description: 'Назва процеса - мультимовний масив '
+                              items:
+                                x-stoplight:
+                                  id: 0r3bmq5ubc835
+                                type: object
+                                properties:
+                                  lang:
+                                    x-stoplight:
+                                      id: 6bfh1k0haz64h
+                                    description: 'код мови перекладу що надається обʼєктом '
+                                    enum:
+                                      - uk
+                                      - en
+                                  translation:
+                                    type: string
+                                    x-stoplight:
+                                      id: f60arbnv9oloe
+                                    description: переклад мовою обʼєкта
+                            description:
+                              type: array
+                              x-stoplight:
+                                id: 5sqz9q4xizzb1
+                              description: 'Опис процеса - мультимовний масив '
+                              items:
+                                x-stoplight:
+                                  id: cmuj4jesj65jt
+                                type: object
+                                properties:
+                                  lang:
+                                    x-stoplight:
+                                      id: 6u9x27tyumpm6
+                                    description: 'код мови перекладу що надається обʼєктом '
+                                    enum:
+                                      - uk
+                                      - en
+                                  translation:
+                                    type: string
+                                    x-stoplight:
+                                      id: yg0mmhkn6csap
+                                    description: 'код мови перекладу що надається обʼєктом '
+                            status:
+                              x-stoplight:
+                                id: rknv3bujprxq4
+                              enum:
+                                - preparation
+                                - implementation
+                                - complete
+                                - cancelled
+                                - unsuccessful
+                              description: Код статусу контрактного процеса
+                            dateModified:
+                              type: string
+                              x-stoplight:
+                                id: r0xj4ozub1gdb
+                              format: date-time
+                              description: Дата осоаннього оновлення процеса
+                            externaReference:
+                              type: string
+                              x-stoplight:
+                                id: h5ct0s612p07z
+                              description: >-
+                                Ідентифікатор процеса в зовнійшій системі (в
+                                випадку Прозорро - TenderID)
+                            tender:
+                              type: object
+                              x-stoplight:
+                                id: 4tsowv4k6zrlc
+                              description: Дані щодо процедури закупівлі в рамках процесу
+                              properties:
+                                id:
+                                  type: string
+                                  x-stoplight:
+                                    id: dyn2lm6s2904w
+                                  description: >-
+                                    Ідентифікатор закупівлі. Застосовуються
+                                    тільки для кейсів закупівель через Прозорро
+                            contract:
+                              type: object
+                              x-stoplight:
+                                id: zsienqe636xjp
+                              description: 'Дані щодо укладеного в рамках процесу договору '
+                              properties:
+                                id:
+                                  type: string
+                                  x-stoplight:
+                                    id: xw4jzjvelks4x
+                                  description: >-
+                                    Номер договору (в випадку Прозорро -
+                                    ContractID)
+                                status:
+                                  x-stoplight:
+                                    id: arabjhnldx2fm
+                                  enum:
+                                    - active
+                                    - complete
+                                    - terminated
+                                  description: 'Код статусу договору '
+                                period:
+                                  type: object
+                                  x-stoplight:
+                                    id: jbohqf0vnbopx
+                                  description: 'Період дії договору '
+                                  properties:
+                                    startDate:
+                                      type: string
+                                      x-stoplight:
+                                        id: 6swdqpome9nn8
+                                      format: date-time
+                                      description: 'Дата початку дії '
+                                    endDate:
+                                      type: string
+                                      x-stoplight:
+                                        id: 46hs647qzgc2l
+                                      format: date-time
+                                      description: 'Дата завершення дії '
+                                value:
+                                  type: object
+                                  x-stoplight:
+                                    id: 3gn9jcjkh2q50
+                                  description: Сума договору
+                                  properties:
+                                    amount:
+                                      type: number
+                                      x-stoplight:
+                                        id: 6xghj1arfsyml
+                                      description: 'Фінансове значення суми договору '
+                                    currency:
+                                      x-stoplight:
+                                        id: 3se5ncrdv1fbc
+                                      description: 'Код валюти договору '
+                                      enum:
+                                        - USD
+                                        - EUR
+                                        - UAH
+                                    valueAddedTaxIncluded:
+                                      type: boolean
+                                      x-stoplight:
+                                        id: 9q49b7lxurl3y
+                                      description: 'Признак включення ПДВ в суму договору '
+                                suppliers:
+                                  type: array
+                                  x-stoplight:
+                                    id: qvoars3np6vhh
+                                  description: Постачальники за договором
+                                  items:
+                                    x-stoplight:
+                                      id: b8djvn45rfw12
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                        x-stoplight:
+                                          id: melej0cg5go69
+                                        description: >-
+                                          Ідентифікатор організації-постачальинка
+                                          в масиві parties
+                                      name:
+                                        type: string
+                                        x-stoplight:
+                                          id: 6gux6wgknm0hw
+                                        description: Назва організації-постачальника
+                                dateSigned:
+                                  type: string
+                                  x-stoplight:
+                                    id: g7sxgooa12n8u
+                                  description: 'Дата підписання договору '
+                                  format: date-time
+                                procurementCategory:
+                                  x-stoplight:
+                                    id: 9qhllmvpu4899
+                                  enum:
+                                    - goods
+                                    - works
+                                    - services
+                                  description: 'Категорія предмету договору '
+                                additionalProcurementCategories:
+                                  type: array
+                                  x-stoplight:
+                                    id: ppsp0yedy0kvn
+                                  description: 'Додаткові категорії предмету договору '
+                                  items:
+                                    x-stoplight:
+                                      id: mphlwy2xlpgp5
+                                    enum:
+                                      - linear
+                                      - nonLinear
+                                implementation:
+                                  type: object
+                                  x-stoplight:
+                                    id: wv89mqt503ek9
+                                  description: 'Хід виконання договору '
+                                  properties:
+                                    metrics:
+                                      type: array
+                                      x-stoplight:
+                                        id: 3wt62t6mp4iq4
+                                      minItems: 1
+                                      description: 'Показник план-факту договору '
+                                      items:
+                                        x-stoplight:
+                                          id: zj4ifq9f9da76
+                                        type: object
+                                        properties:
+                                          id:
+                                            x-stoplight:
+                                              id: wppc7ccaem71k
+                                            enum:
+                                              - contractPlan
+                                              - contractFact
+                                            description: Код типу показника
+                                          observations:
+                                            type: array
+                                            x-stoplight:
+                                              id: 2dvkafcfxrtnb
+                                            items:
+                                              x-stoplight:
+                                                id: g7lcbtu349u0t
+                                              type: object
+                                              properties:
+                                                id:
+                                                  type: string
+                                                  x-stoplight:
+                                                    id: bdv0znj2fp8de
+                                                measure:
+                                                  type: string
+                                                  x-stoplight:
+                                                    id: g1wboiee0o4pu
+                                                dimensions:
+                                                  type: object
+                                                  x-stoplight:
+                                                    id: 28nv02tsc94q1
+                                                  properties:
+                                                    workItem:
+                                                      x-stoplight:
+                                                        id: 0wscgn0mm3uu1
+                                                    workCategory:
+                                                      x-stoplight:
+                                                        id: vcfx2zfx8o4bc
+                                                period:
+                                                  type: object
+                                                  x-stoplight:
+                                                    id: fei9evfwt0bhb
+                                                  properties:
+                                                    startDate:
+                                                      type: string
+                                                      x-stoplight:
+                                                        id: a328vy82anfyr
+                                                      format: date-time
+                                                    endDate:
+                                                      type: string
+                                                      x-stoplight:
+                                                        id: pjukzuif35g2a
+                                                      format: date-time
+                                                unit:
+                                                  type: object
+                                                  x-stoplight:
+                                                    id: 9gxm1niuqvq94
+                                                  description: Одиниця виміру складової показника
+                                                  properties:
+                                                    name:
+                                                      type: string
+                                                      x-stoplight:
+                                                        id: u9vratfr3av5c
+                                                      description: 'Назва одиниці виміру '
+                                                    id:
+                                                      type: string
+                                                      x-stoplight:
+                                                        id: 81360rq9ihz1z
+                                                      description: >-
+                                                        код одиниці виміру згідно з схемою, що
+                                                        застосовується
+                                                    scheme:
+                                                      x-stoplight:
+                                                        id: digdg2yu1ipau
+                                                      description: 'схема класифікації одиниці виміру '
+                      required:
+                        - id
+                        - platform
+                required:
+                  - date
+                  - updated
+                  - type
+                  - title
+                  - description
+                  - purpose
+                  - status
+                  - parties
+        '404':
+          description: Not Found
+      operationId: get-ideas-id
+      description: 'Отримання окремого проєкта DREAM за його системним ідентифікатором. '
+      x-stoplight:
+        id: dqn90wiwcb95w
+  /marketplace/public/dream/objects/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: ідентифікатор обʼєкта DREAM
+    get:
+      summary: Отримання функціонального обʼєкта DREAM за {id}
+      tags: []
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: object
+                properties:
+                  date:
+                    type: string
+                    x-stoplight:
+                      id: x56c2tz8g8kg7
+                    format: date-time
+                    description: дата створення обʼєкта
+                  updated:
+                    type: string
+                    x-stoplight:
+                      id: 7nh9aea2n5zva
+                    format: date-time
+                    description: дата останнього оновлення обʼєкта
+                  status:
+                    x-stoplight:
+                      id: dth3xj1jr9u55
+                    enum:
+                      - identification
+                      - preparation
+                      - active
+                      - complete
+                    description: код статусу обʼєкта згідно з довідником
+                  internalId:
+                    type: string
+                    x-stoplight:
+                      id: 96ak5wif0ehbm
+                    description: 'Номер обʼєкта за внутрішнім обліком '
+                  title:
+                    type: array
+                    x-stoplight:
+                      id: d1zxv85p1ntwc
+                    minItems: 1
+                    description: Назва обʼєкта - мультимовний масив
+                    items:
+                      x-stoplight:
+                        id: x09hoq3qyohb2
+                      type: object
+                      properties:
+                        lang:
+                          x-stoplight:
+                            id: 0mwe455bgkb9q
+                          enum:
+                            - en
+                            - uk
+                          description: 'код мови перекладу що надається обʼєктом '
+                        translation:
+                          type: string
+                          x-stoplight:
+                            id: scjx4twior1xw
+                          description: переклад мовою обʼєкта
+                  description:
+                    type: array
+                    x-stoplight:
+                      id: 10t2w8jb4jlxd
+                    minItems: 1
+                    description: Опис обʼєкта - мультимовний масив
+                    items:
+                      x-stoplight:
+                        id: sw2iwz2xr80bc
+                      type: object
+                      properties:
+                        lang:
+                          x-stoplight:
+                            id: upp1xim58sgwy
+                          enum:
+                            - uk
+                            - en
+                          description: 'код мови перекладу що надається обʼєктом '
+                        translation:
+                          type: string
+                          x-stoplight:
+                            id: bn8bl76j359gc
+                          description: переклад мовою обʼєкта
+                  parties:
+                    type: array
+                    x-stoplight:
+                      id: sdv9z2hee3lnq
+                    minItems: 1
+                    description: Сторони обʼєкта
+                    items:
+                      x-stoplight:
+                        id: h067ev2gvtzf8
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: nkh5sudpm50zx
+                          description: складений ідентифікатор сторони обʼєкта
+                        roles:
+                          type: array
+                          x-stoplight:
+                            id: lbio1ls4nfxxf
+                          description: код ролі сторони обʼєкта згідно з довідником
+                          items:
+                            x-stoplight:
+                              id: oj28jzjxzxu2d
+                            enum:
+                              - balancer
+                        identifier:
+                          type: object
+                          x-stoplight:
+                            id: 7nxhvemgzxbvs
+                          description: Національний ідентифікатор сторони обʼєкта
+                          required:
+                            - scheme
+                            - id
+                            - legalName
+                          properties:
+                            scheme:
+                              x-stoplight:
+                                id: dpq4a4ov9ojf6
+                              enum:
+                                - UA-EDR
+                              description: код схеми ідентифкації
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: p9qemodsdevvf
+                              description: >-
+                                Ідентифікатор згідно використованої схеми
+                                ідентифікації згідно з довідником
+                            legalName:
+                              type: string
+                              x-stoplight:
+                                id: xaifxn4nd16d3
+                              description: 'офіційна назва згідно із схемою ідентифікації '
+                      required:
+                        - id
+                        - roles
+                        - identifier
+                  classification:
+                    type: object
+                    x-stoplight:
+                      id: wpay96tzcts9i
+                    description: Основана класифікація обʼєкта
+                    required:
+                      - scheme
+                      - id
+                    properties:
+                      scheme:
+                        x-stoplight:
+                          id: 5xuep92nmai3y
+                        enum:
+                          - COFOG
+                        description: 'Код схеми класифікації '
+                      id:
+                        type: string
+                        x-stoplight:
+                          id: nasfd6hzmg7cj
+                        description: 'Код класифікації відповідно до вказаної схеми '
+                  additionalClassifications:
+                    type: array
+                    x-stoplight:
+                      id: fjw0n7dlg1y0o
+                    minItems: 1
+                    description: додактові класифікатори обʼєкта
+                    items:
+                      x-stoplight:
+                        id: e8cl7kih9ugk0
+                      type: object
+                      properties:
+                        scheme:
+                          x-stoplight:
+                            id: vmudtbuppzmkt
+                          enum:
+                            - UN-CPC
+                            - WB-ECO
+                            - UA-MOS
+                            - UA-MOH
+                          description: код схеми класифікації згідно з довідником
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: wm9m2bcbxcu81
+                          description: >-
+                            ідентифікатор класифікації згідно схеми
+                            класифікації 
+                        uri:
+                          type: string
+                          x-stoplight:
+                            id: ckxlbzylsi9n2
+                          description: uri класифікатора
+                          format: uri
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: v44n88zfzodr2
+                          description: 'опис класифікації '
+                      required:
+                        - scheme
+                        - id
+                  locations:
+                    type: array
+                    x-stoplight:
+                      id: k9yrmjuxoqhfi
+                    minItems: 1
+                    description: 'гео дані обʼєкта '
+                    items:
+                      x-stoplight:
+                        id: h6qnzw4zdqk1s
+                      type: object
+                      properties:
+                        gazetteer:
+                          type: object
+                          x-stoplight:
+                            id: 6lmc4ckjfxw3i
+                          description: 'масив гео-просторових даних '
+                          required:
+                            - scheme
+                            - identifiers
+                          properties:
+                            scheme:
+                              x-stoplight:
+                                id: w65ob00iiigpn
+                              enum:
+                                - UA-CATOTTG
+                                - UA-COATU
+                              description: >-
+                                схема ідентифікації гео-просторових даних згідно
+                                з довідником 
+                            identifiers:
+                              type: array
+                              x-stoplight:
+                                id: 9w3epzv0x40hx
+                              description: 'перелік кодів гео даних згідно схеми '
+                              items:
+                                x-stoplight:
+                                  id: jhrx14jxi6mqk
+                                type: string
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: kbchpljrdzqj8
+                          description: 'опис до елемента гео даних '
+                      required:
+                        - gazetteer
+                  documents:
+                    type: array
+                    x-stoplight:
+                      id: brvaxx4x4tfby
+                    minItems: 1
+                    description: Документи обʼєкта
+                    items:
+                      x-stoplight:
+                        id: e8acbq4k4zzjj
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: u95lo58eaz1ah
+                          description: ідентифікатор документа обʼєкта
+                          format: uuid
+                        documentType:
+                          x-stoplight:
+                            id: 5dbfco07kcpnl
+                          enum:
+                            - illustrationBefore
+                            - illustrationDamaged
+                            - illustrationInProgress
+                            - illustrationVision
+                            - illustrationComplete
+                            - illustrationCover
+                            - illustration
+                            - document
+                            - designDocument
+                            - technicalDocument
+                            - legalDocument
+                            - permissionDocument
+                            - feasibilityStudy
+                            - certification
+                          description: 'код типу документа згідно з довідником '
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: h3vvawu31g8u5
+                          format: uri
+                          description: uri документа обʼєкта
+                        format:
+                          type: string
+                          x-stoplight:
+                            id: 5e4pg5jhqtbap
+                          description: формат документа обʼєкта, Mime Types
+                        datePublished:
+                          type: string
+                          x-stoplight:
+                            id: uhpe3lb06x140
+                          description: дата публікації документа
+                        dateModified:
+                          type: string
+                          x-stoplight:
+                            id: 7jkio1kv28d9p
+                          description: дата модифікації документа обʼєкта
+                        title:
+                          type: string
+                          x-stoplight:
+                            id: lxcobwptg26cd
+                          description: Назва документа обʼєкта
+                        description:
+                          type: string
+                          x-stoplight:
+                            id: bly9t6tsdu3tx
+                          description: опис документа обʼєкта
+                        accessDetails:
+                          x-stoplight:
+                            id: hif24tgf9c72j
+                          enum:
+                            - open
+                            - limited
+                            - restricted
+                          description: 'код рівня доступу до документа згідно з довідником '
+                      required:
+                        - id
+                        - documentType
+                        - url
+                        - format
+                        - datePublished
+                        - dateModified
+                  relatedProcesses:
+                    type: array
+                    x-stoplight:
+                      id: pczbyfo1z4w0y
+                    minItems: 1
+                    description: >-
+                      процеси, повʼязані з обʼєктом. Базово - проєкт
+                      відновлення, що ініційовано на базі поточного
+                      функціонального обʼєкта
+                    items:
+                      x-stoplight:
+                        id: oaj7i47ymggr9
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: 8zuyukv8bt5l7
+                          description: ідентифікатор запису про повʼязаний процес
+                        scheme:
+                          x-stoplight:
+                            id: j3ojr1fxo6e9x
+                          enum:
+                            - UA-DREAM
+                            - UA-RDDP
+                            - UA-PROZORRO
+                          description: >-
+                            схема ідентифікації повʼязаного процесу згідно з
+                            довідником
+                        identifier:
+                          type: string
+                          x-stoplight:
+                            id: o1mcbecxisxb0
+                          description: 'ідентифікатор процесу згідно схеми ідентифікації '
+                        relationship:
+                          x-stoplight:
+                            id: 5jyarmba8i5od
+                          enum:
+                            - parent
+                            - alternative
+                            - supplimented
+                            - dependency
+                            - procurement
+                            - object
+                            - idea
+                          description: 'код типу звʼязку згідно з довідником '
+                      required:
+                        - id
+                        - scheme
+                        - identifier
+                        - relationship
+                required:
+                  - date
+                  - updated
+                  - status
+                  - title
+                  - classification
+        '404':
+          description: Not Found
+      operationId: get-objects-id
+      x-stoplight:
+        id: tc5u5ipzm208o
+      description: >-
+        Отримання окремого функціонального обʼєкта щодо якого ініційовано проєкт
+        DREAM за системним ідентифікатором такого обʼєкта (отримується в складі
+        даних проєкта - елемент масива relatedProcesses[relationship:object]. 
+  /marketplace/public/companies/{id}:
+    get:
+      summary: Отримання профіля організації за {id}
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    x-stoplight:
+                      id: qx6imci5qfmby
+                    description: системний ідентифікатор організації
+                  updated:
+                    type: string
+                    x-stoplight:
+                      id: a40w6oezwza9b
+                    format: date-time
+                    description: дата оновлення профіля організації
+                  identifier:
+                    type: object
+                    x-stoplight:
+                      id: y7b5d36d5praz
+                    description: Національний ідентифікатор організації
+                    required:
+                      - scheme
+                      - id
+                      - legalName
+                    properties:
+                      scheme:
+                        x-stoplight:
+                          id: disr8cni3s1zp
+                        enum:
+                          - UA-EDR
+                        description: код схеми ідентифкації
+                      id:
+                        type: string
+                        x-stoplight:
+                          id: flanqr006nj2a
+                        description: >-
+                          Ідентифікатор згідно використованої схеми
+                          ідентифікації згідно з довідником
+                      legalName:
+                        type: string
+                        x-stoplight:
+                          id: mahc9bzjs4tbt
+                        description: 'офіційна назва згідно із схемою ідентифікації '
+                  contactPoint:
+                    type: object
+                    x-stoplight:
+                      id: lsd7zqhrw863b
+                    description: Контактна особа організації
+                    properties:
+                      name:
+                        type: string
+                        x-stoplight:
+                          id: aecda56wbtbyt
+                        description: Повне імʼя контактної особи
+                      telephone:
+                        type: string
+                        x-stoplight:
+                          id: x9vfvh4na9ew3
+                        description: Контактний телефон імʼя контактної особи
+                      email:
+                        type: string
+                        x-stoplight:
+                          id: q8bpl9tx2up5j
+                        format: email
+                        description: Електрона пошта контактної особи
+                  details:
+                    type: object
+                    x-stoplight:
+                      id: 6v6czh7z5uagz
+                    description: додаткова інформація про організацію
+                    properties:
+                      classifications:
+                        type: array
+                        x-stoplight:
+                          id: i3w7wywls9m0w
+                        description: >-
+                          класифікація аспектів організації: канали комунікації,
+                          тип організації, правова форма 
+                        items:
+                          x-stoplight:
+                            id: wprody4ds5he2
+                          type: object
+                          properties:
+                            scheme:
+                              x-stoplight:
+                                id: u5qlw6mv2lb50
+                              enum:
+                                - social
+                                - UA-KOPFG
+                                - TED-CA
+                              description: код схеми класифікації аспекта
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: 3k1ehmssjuewi
+                              description: ідентифкатор класу згідно застосованої схеми
+                            description:
+                              type: string
+                              x-stoplight:
+                                id: icn5i39coz512
+                              description: опис аспекта класифікації
+                      description:
+                        type: array
+                        x-stoplight:
+                          id: d3q91g3tzg5w1
+                        minItems: 1
+                        description: загальний опис організації
+                        items:
+                          x-stoplight:
+                            id: bw3po9tp3vkp1
+                          type: object
+                          properties:
+                            lang:
+                              x-stoplight:
+                                id: 0pthubeh1s4fr
+                              enum:
+                                - uk
+                                - en
+                              description: 'код мови перекладу що надається обʼєктом '
+                            translation:
+                              type: string
+                              x-stoplight:
+                                id: 85jlsaxiofzub
+                              description: переклад мовою обʼєкта
+                      url:
+                        type: string
+                        x-stoplight:
+                          id: u0z9nvqhc2dep
+                        format: uri
+                        description: адреса web-сайту організації
+                  documents:
+                    type: array
+                    x-stoplight:
+                      id: nnw7ebrck6drv
+                    minItems: 1
+                    description: документи організації
+                    items:
+                      x-stoplight:
+                        id: p699aus37gzgl
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: qvji62w7ltqjk
+                          description: ідентифікатор документа
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: omzsz7vdtd91u
+                          format: uri
+                          description: uri документа
+                        documentType:
+                          x-stoplight:
+                            id: y99iem8ffv6jk
+                          enum:
+                            - illustrationBefore
+                            - illustrationDamaged
+                            - illustrationInProgress
+                            - illustrationVision
+                            - illustrationComplete
+                            - illustrationCover
+                            - illustration
+                            - document
+                            - designDocument
+                            - technicalDocument
+                            - legalDocument
+                            - permissionDocument
+                            - feasibilityStudy
+                            - certification
+                          description: код типу документа згідно довідника
+                        format:
+                          type: string
+                          x-stoplight:
+                            id: 4iudoibp3xlwb
+                          description: формат документа, MIME Types
+                        datePublished:
+                          type: string
+                          x-stoplight:
+                            id: w5hss0tseltic
+                          format: date-time
+                          description: дата публікації документа
+                        dateModified:
+                          type: string
+                          x-stoplight:
+                            id: e7c4anniujahj
+                          format: date-time
+                          description: дата модифікації документа
+                        accessDetails:
+                          x-stoplight:
+                            id: m8dnanv183k4p
+                          enum:
+                            - open
+                            - limited
+                            - restricted
+                          description: код режиму доступу до документа згідно довідника
+                      required:
+                        - id
+                        - url
+                        - documentType
+                        - format
+                        - datePublished
+                        - dateModified
+                        - accessDetails
+                  partners:
+                    type: array
+                    x-stoplight:
+                      id: onjm5d578kjoi
+                    minItems: 1
+                    description: 'партнети організації (наприклад: міста-партнери)'
+                    items:
+                      x-stoplight:
+                        id: obbf60aui9qrq
+                      type: object
+                      properties:
+                        classification:
+                          type: object
+                          x-stoplight:
+                            id: cjm15nfpfhv48
+                          description: классифікація партнета організації
+                          properties:
+                            scheme:
+                              x-stoplight:
+                                id: 7xl9c11tm491l
+                              enum:
+                                - GEONAMES
+                              description: код схеми класифікації
+                            id:
+                              type: string
+                              x-stoplight:
+                                id: 8dqoklchw4qnn
+                              description: ідентифікатор в застосованій схемі
+                          required:
+                            - scheme
+                            - id
+                        countryCode:
+                          x-stoplight:
+                            id: ifdz4w5icirj2
+                          description: код країни партнера згідно класифікації ISO-Alpha2
+                  address:
+                    type: object
+                    x-stoplight:
+                      id: lsaqun5jm5y96
+                    description: адреса організації
+                    properties:
+                      streetAddress:
+                        type: string
+                        x-stoplight:
+                          id: 7lghdztm0b4go
+                        description: повна поштова адреса організації
+                      postalCode:
+                        type: string
+                        x-stoplight:
+                          id: ajq2xhm35e8jr
+                        description: поштовий індекс організації
+                      addressDetails:
+                        type: object
+                        x-stoplight:
+                          id: i4u17ebh58ksz
+                        description: >-
+                          структурована інформація щодо теріторіальної
+                          приналежності (використовується для профілів ОТГ)
+                        properties:
+                          territory:
+                            type: object
+                            x-stoplight:
+                              id: codgt5n7y22hs
+                            description: класифікація території організації
+                            properties:
+                              scheme:
+                                x-stoplight:
+                                  id: 2alak8neycy1j
+                                enum:
+                                  - UA-CATOTTG
+                                description: код схеми класифікації
+                              id:
+                                type: string
+                                x-stoplight:
+                                  id: o5h6e4iwylzjv
+                                description: >-
+                                  ідентифкатор класу відповідно до
+                                  використованої схеми
+                            required:
+                              - scheme
+                              - id
+                  persons:
+                    type: array
+                    x-stoplight:
+                      id: 4bjtwqdi8w4v6
+                    minItems: 1
+                    description: 'службові особи організації '
+                    items:
+                      x-stoplight:
+                        id: x5iqbhcr5r74t
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: nre72jwllelly
+                          description: 'системний ідентифікатор особи '
+                        name:
+                          type: string
+                          x-stoplight:
+                            id: lgden9dkko2p0
+                          description: Повне імʼя особи
+                        businessFunctions:
+                          type: array
+                          x-stoplight:
+                            id: liq7uyhgdoafa
+                          minItems: 1
+                          description: дані щодо ролі особи в організації
+                          items:
+                            x-stoplight:
+                              id: 9dbd5u987gdgv
+                            type: object
+                            properties:
+                              type:
+                                x-stoplight:
+                                  id: flnm7wpy8o26w
+                                enum:
+                                  - authority
+                                description: код типу ролі згідно довідника
+                              jobTitle:
+                                type: string
+                                x-stoplight:
+                                  id: vgnrqr0mc2jw5
+                                description: 'назва ролі/посади '
+                              email:
+                                type: string
+                                x-stoplight:
+                                  id: wd3xl8xzx1pdi
+                                format: email
+                                description: 'електрона пошта особи '
+                              telephone:
+                                type: string
+                                x-stoplight:
+                                  id: pbchj3bl6bj0e
+                                description: 'контактний телефон особи '
+                      required:
+                        - id
+                        - name
+                  memberOf:
+                    type: array
+                    x-stoplight:
+                      id: 2bdc87yqem16x
+                    description: посилання на батьківську організацію
+                    items:
+                      x-stoplight:
+                        id: 4m426uasr86k8
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: 9leg71c7fz98k
+                          description: код батьківської організації в DREAM
+                required:
+                  - id
+                  - updated
+                  - identifier
+        '404':
+          description: Not Found
+      operationId: get-companies
+      x-stoplight:
+        id: yk6cgy1le1235
+      description: >-
+        Отримання профіля окремої організації в DREAM за її системним
+        ідентифікатором. 
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: ідентифікатор організації в DREAM
 components:
-  schemas:
-    Pet:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        tag:
-          type: string
-    Pets:
-      type: array
-      items:
-        $ref: "#/components/schemas/Pet"
-    Error:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-
+  schemas: {}
 
